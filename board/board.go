@@ -63,7 +63,7 @@ func CalBoard() {
 func Printer(point string, M float64) {
 	cal := Calculater(M)
 	CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
-	fmt.Printf("以上为M%s的可能配筋情况", point)
+	fmt.Printf("以上为M%s的可能配筋情况 \n", point)
 	fmt.Printf("M%s: %f, αs: %f, pesi: %f, As: %f, Location: %s \n", point, M, cal[0], cal[1], cal[2], pkg.GetLocation(point))
 }
 
