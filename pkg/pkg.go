@@ -82,3 +82,33 @@ func CalPesi(αs float64) float64 {
 func CalAs(pesi float64) float64 {
 	return math.Abs(pesi * PKGb * PKGα1 * FC * FY / math.Pow(10, 6))
 }
+
+
+// NewDiameter generate a array of diameters for SURFACE OF BUTTOM
+func NewDiameter(location string) (diameters []float64) {
+	// 板的钢筋直径取 6, 8, 10, 12 mm
+	// 板面钢筋 > 8 mm
+	// 板底钢筋 > 6 mm
+	if location == SURFACE {
+		return []float64{8, 10, 12}
+	} else if location == BUTTOM {
+		return []float64{6, 8, 10, 12}
+	}
+	panic("wrong location which should be SURFACE or BUTTOM")
+}
+
+// NewSpace init the space bewteen reinforcement of board.
+// h (mm) is the height of the board.
+func NewSpace(h float64) (space []float64) {
+	// return []float64{140.0}
+	if h <= 150.0 {
+		for i := 70.0; i < 200.0; i += 10.0 {
+			space = append(space, i)
+		}
+	} else {
+		for i := 70.0; i < 250.0 && i <= 1.5*h; i += 10.0 {
+			space = append(space, i)
+		}
+	}
+	return
+}
