@@ -3,44 +3,12 @@ package board
 import (
 	"errors"
 	"fmt"
+	"github.com/Jinof/concrete/pkg"
 	"log"
 	"math"
 )
 
-const (
-	// All const base on mm && KN/m^2
-	// a1  1.0
-	α1 = 1.0
-	// FC  11.9 N/mm^2  1.19 x 10 ^ 4 KN/m^2
-	FC = 1.19 * 10000
-	// b  1000 mm  1 m
-	b = 1
-	// h 80 mm 0.08 m
-	h = 0.07
-	// h0  h - 0.02 m
-	h0 = h - 0.02
-	// FY  270 N/mm^2  2.7 x 10 ^5 KN/m^2
-	FY = 2.7 * 100000
-
-	// A .
-	A = "A"
-	// B .
-	B = "B"
-	// C .
-	C = "C"
-
-	// FIRST .
-	FIRST = "1"
-	// SECOND .
-	SECOND = "2"
-	// THIRD .
-	THIRD = "3"
-
-	// SURFACE  板顶
-	SURFACE = "SURFACE"
-	// BUTTOM  板底
-	BUTTOM = "BUTTOM"
-)
+const ()
 
 // CalBoard calculate board
 func CalBoard() {
@@ -84,35 +52,19 @@ func CalBoard() {
 	// M2 = M3
 	M2 := gq * float64(l02*l02) / 16
 
-	Printer(A, MA)
-	Printer(FIRST, M1)
-	Printer(B, MB)
-	Printer(C, MC)
-	Printer(SECOND, M2)
-}
-
-// GetLocation return the location of the point
-func GetLocation(point string) string {
-	switch point {
-	case A:
-		return SURFACE
-	case B:
-		return SURFACE
-	case C:
-		return SURFACE
-	case FIRST:
-		return BUTTOM
-	case SECOND:
-		return BUTTOM
-	}
-	panic("[GetLocation] bad point")
+	Printer(pkg.A, MA)
+	Printer(pkg.FIRST, M1)
+	Printer(pkg.B, MB)
+	Printer(pkg.C, MC)
+	Printer(pkg.SECOND, M2)
 }
 
 // Printer print
 func Printer(point string, M float64) {
 	cal := Calculater(M)
-	CalReinforcement(h, cal[2], SURFACE)
-	fmt.Printf("M%s: %f, αs: %f, pesi: %f, As: %f \n", point, M, cal[0], cal[1], cal[2])
+	CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
+	fmt.Printf("以上为M%s的可能配筋情况", point)
+	fmt.Printf("M%s: %f, αs: %f, pesi: %f, As: %f, Location: %s \n", point, M, cal[0], cal[1], cal[2], pkg.GetLocation(point))
 }
 
 // Calculater calculate
@@ -125,7 +77,7 @@ func Calculater(M float64) [3]float64 {
 
 // Calαs cal αs
 func Calαs(M float64) float64 {
-	return math.Abs(M / (α1 * FC * b * h0 * h0))
+	return math.Abs(M / (pkg.PKGα1 * pkg.FC * pkg.PKGb * pkg.PKGh0 * pkg.PKGh0))
 }
 
 // CalPesi cal pesi
@@ -136,7 +88,7 @@ func CalPesi(αs float64) float64 {
 // CalAs cal As
 // m^2 / 10^6 -> mm^2
 func CalAs(pesi float64) float64 {
-	return math.Abs(pesi * b * α1 * FC * FY / math.Pow(10, 6))
+	return math.Abs(pesi * pkg.PKGb * pkg.PKGα1 * pkg.FC * pkg.FY / math.Pow(10, 6))
 }
 
 // CalReinforcement cal reinforcement
@@ -244,9 +196,9 @@ func NewDiameter(location string) (diameters []float64) {
 	// 板的钢筋直径取 6, 8, 10, 12 mm
 	// 板面钢筋 > 8 mm
 	// 板底钢筋 > 6 mm
-	if location == SURFACE {
+	if location == pkg.SURFACE {
 		return []float64{8, 10, 12}
-	} else if location == BUTTOM {
+	} else if location == pkg.BUTTOM {
 		return []float64{6, 8, 10, 12}
 	}
 	panic("wrong location which should be SURFACE or BUTTOM")
