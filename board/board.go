@@ -32,17 +32,32 @@ func CalBoard() {
 	// M2 = M3
 	M2 := gq * math.Pow(l02, 2) / 16
 
-	Printer(pkg.A, MA)
-	Printer(pkg.FIRST, M1)
-	Printer(pkg.B, MB)
-	Printer(pkg.C, MC)
-	Printer(pkg.SECOND, M2)
+	var cal pkg.CalculaterData
+	var rf pkg.Reinforcement
+
+	cal = pkg.Calculater(MA)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(pkg.A))
+	Printer(pkg.A, MA, cal, rf)
+
+	cal = pkg.Calculater(M1)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(pkg.FIRST))
+	Printer(pkg.FIRST, M1, cal, rf)
+
+	cal = pkg.Calculater(MB)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(pkg.B))
+	Printer(pkg.B, MB, cal, rf)
+
+	cal = pkg.Calculater(MC)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(pkg.C))
+	Printer(pkg.C, MC, cal, rf)
+
+	cal = pkg.Calculater(M2)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(pkg.SECOND))
+	Printer(pkg.SECOND, M2, cal, rf)
 }
 
 // Printer print
-func Printer(point string, M float64) {
-	cal := pkg.Calculater(M)
-	rf, _ := CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
+func Printer(point string, M float64, cal pkg.CalculaterData, rf pkg.Reinforcement) {
 
 	fmt.Printf("M%s: %f, αs: %f, pesi: %f, As: %f, Location: %s \n", point, M, cal[0], cal[1], cal[2], pkg.GetLocation(point))
 	fmt.Printf("以下为M%s的可能配筋情况 \n", point)

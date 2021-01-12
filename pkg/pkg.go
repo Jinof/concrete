@@ -59,13 +59,15 @@ func GetLocation(point string) string {
 	panic(fmt.Sprintf("[GetLocation] bad point %s", point))
 }
 
+// CalculaterData def
+type CalculaterData []float64
 
 // Calculater calculate
-func Calculater(M float64) [3]float64 {
+func Calculater(M float64) (cal CalculaterData) {
 	αs := Calαs(M)
 	pesi := CalPesi(αs)
 	As := CalAs(pesi)
-	return [3]float64{αs, pesi, As}
+	return CalculaterData{αs, pesi, As}
 }
 
 // Calαs cal αs
