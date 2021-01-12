@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-const ()
-
 // CalBoard calculate board
 func CalBoard() {
 	// l01 = 1970 mm, l02 = 2000 mm
