@@ -104,3 +104,8 @@ func init() {
 func GetG() float64 {
 	return g
 }
+
+// GetQ return q
+func GetQ() float64 {
+	return q
+}
