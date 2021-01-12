@@ -114,12 +114,35 @@ func NewSpace(h float64) (space []float64) {
 	return
 }
 
+// Reinforcement def
+type Reinforcement struct {
+	Counter []data
+}
+
+type data struct {
+	rfType string  // single or double
+	space  float64
+	as float64
+	d float64
+	d1 float64
+	d2 float64
+}
+
+// Reinforcement def
+var reinforcement Reinforcement
+
+// NewReinforcement return reinforcement
+func NewReinforcement() Reinforcement {
+	return reinforcement
+}
+
 // CalRealSingleReinforcement cal with one Reinforcement
 // s space (mm)
 // diameter (mm)
 // r real (mm^2) is the real reinforcement
 // d (mm) is the diameter
-func CalRealSingleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+func (rf *Reinforcement) CalRealSingleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+	const rfType = "single"
 	var r, s float64
 	exist := false
 	for _, s = range spaces {
@@ -127,7 +150,13 @@ func CalRealSingleReinforcement(spaces []float64, diameters []float64, As float6
 			r = realAsOfBoardForSingleReinforcement(s, d)
 			if checkAs(r, As) {
 				exist = true
-				fmt.Println("single", r, s, d)
+				data := data{
+					rfType: rfType,
+					space: s,
+					as: r,
+					d: d,
+				}
+				rf.Counter = append(rf.Counter, data)
 			}
 		}
 	}
@@ -143,14 +172,34 @@ func CalRealSingleReinforcement(spaces []float64, diameters []float64, As float6
 // real (mm^2) is the real reinforcement
 // d1 (mm) is the shorter diameter
 // d2 (mm) is the longer diameter
-func CalRealDoubleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+func (rf *Reinforcement) CalRealDoubleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+	const rfType = "double"
 	exist := false
 	for _, s := range spaces {
 		for i := 0; i < len(diameters)-1; i++ {
 			cal := realAsOfBoardForDoubleReinforcement(s, diameters[i], diameters[i+1])
 			if checkAs(cal, As) {
 				exist = true
-				fmt.Println("double", cal, s, diameters[i], diameters[i+1])
+				data := data{
+					rfType: rfType,
+					space: s,
+					as: cal,
+					d1: diameters[i],
+					d2: diameters[i+1],
+				}
+				rf.Counter = append(rf.Counter, data)
+			}
+			cal = realAsOfBoardForDoubleReinforcement(s, diameters[i+1], diameters[i])
+			if checkAs(cal, As) {
+				exist = true
+				data := data{
+					rfType: rfType,
+					space: s,
+					as: cal,
+					d1: diameters[i],
+					d2: diameters[i+1],
+				}
+				rf.Counter = append(rf.Counter, data)
 			}
 		}
 	}
