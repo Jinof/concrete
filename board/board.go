@@ -32,18 +32,30 @@ func CalBoard() {
 	// M2 = M3
 	M2 := gq * math.Pow(l02, 2) / 16
 
-	Calculator(MA, pkg.A)
-	Calculator(M1, pkg.FIRST)
-	Calculator(MB, pkg.B)
-	Calculator(MC, pkg.C)
-	Calculator(M2, pkg.SECOND)
+	var cal pkg.BasicCalculaterData
+	var rf pkg.Reinforcement
+
+	cal, rf = Calculator(MA, pkg.A)
+	Printer(pkg.A, MA, cal, rf)
+
+	cal, rf = Calculator(M1, pkg.FIRST)
+	Printer(pkg.FIRST, MA, cal, rf)
+
+	cal, rf = Calculator(MB, pkg.B)
+	Printer(pkg.B, MA, cal, rf)
+
+	cal, rf = Calculator(MC, pkg.C)
+	Printer(pkg.C, MA, cal, rf)
+
+	cal, rf = Calculator(M2, pkg.SECOND)
+	Printer(pkg.SECOND, MA, cal, rf)
 }
 
 // Calculator cal the board
-func Calculator(M float64, point string) {
-	cal := pkg.BasicCalculater(M)
-	rf, _ := CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
-	Printer(point, M, cal, rf)
+func Calculator(M float64, point string) (cal pkg.BasicCalculaterData, rf pkg.Reinforcement) {
+	cal = pkg.BasicCalculater(M)
+	rf, _ = CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
+	return
 }
 
 // Printer print
