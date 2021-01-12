@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"errors"
 	"fmt"
 	"math"
 )
@@ -111,4 +112,82 @@ func NewSpace(h float64) (space []float64) {
 		}
 	}
 	return
+}
+
+// CalRealSingleReinforcement cal with one Reinforcement
+// s space (mm)
+// diameter (mm)
+// r real (mm^2) is the real reinforcement
+// d (mm) is the diameter
+func CalRealSingleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+	var r, s float64
+	exist := false
+	for _, s = range spaces {
+		for _, d := range diameters {
+			r = realAsOfBoardForSingleReinforcement(s, d)
+			if checkAs(r, As) {
+				exist = true
+				fmt.Println("single", r, s, d)
+			}
+		}
+	}
+	if exist {
+		return
+	}
+	return errors.New("bad cal realSingleReinforcement")
+}
+
+// CalRealDoubleReinforcement cal with one Reinforcement
+// space (mm)
+// diameter (mm)
+// real (mm^2) is the real reinforcement
+// d1 (mm) is the shorter diameter
+// d2 (mm) is the longer diameter
+func CalRealDoubleReinforcement(spaces []float64, diameters []float64, As float64) (err error) {
+	exist := false
+	for _, s := range spaces {
+		for i := 0; i < len(diameters)-1; i++ {
+			cal := realAsOfBoardForDoubleReinforcement(s, diameters[i], diameters[i+1])
+			if checkAs(cal, As) {
+				exist = true
+				fmt.Println("double", cal, s, diameters[i], diameters[i+1])
+			}
+		}
+	}
+	if exist {
+		return
+	}
+	return errors.New("bad cal realDoubleReinforcement")
+}
+
+// calas calculate the As (mm^2)
+// d (mm) is the diameter of the reinforcement
+// s (mm) is the space between reinforcement
+func realAsOfBoardForDoubleReinforcement(s, d1, d2 float64) float64 {
+	n := int(1000 / s)
+	n1 := n / 2
+	n2 := n - n1
+	// let sinner reinforcement more
+	if n1 < n2 {
+		n1, n2 = n2, n1
+	}
+	return (math.Pi*math.Pow(d1, 2)/4)*float64(n1) + (math.Pi*math.Pow(d2, 2)/4)*float64(n2)
+}
+
+// calas calculate the As (mm^2)
+// d (mm) is the diameter of the reinforcement
+// s (mm) is the space between reinforcement
+func realAsOfBoardForSingleReinforcement(s, d float64) float64 {
+	return (math.Pi * math.Pow(d, 2) / 4) * (1000 / s)
+}
+
+// checkAs the real As should
+// less than (1 - percent) * As
+// and greater than (1 + percent) * As
+func checkAs(cal float64, As float64) bool {
+	const percent = 0.2
+	if cal > As*(1-percent/4) && cal < As*(1+percent) {
+		return true
+	}
+	return false
 }
