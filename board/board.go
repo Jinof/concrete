@@ -61,35 +61,12 @@ func CalBoard() {
 
 // Printer print
 func Printer(point string, M float64) {
-	cal := Calculater(M)
+	cal := pkg.Calculater(M)
 	CalReinforcement(pkg.PKGh, cal[2], pkg.GetLocation(point))
 	fmt.Printf("以上为M%s的可能配筋情况 \n", point)
 	fmt.Printf("M%s: %f, αs: %f, pesi: %f, As: %f, Location: %s \n", point, M, cal[0], cal[1], cal[2], pkg.GetLocation(point))
 }
 
-// Calculater calculate
-func Calculater(M float64) [3]float64 {
-	αs := Calαs(M)
-	pesi := CalPesi(αs)
-	As := CalAs(pesi)
-	return [3]float64{αs, pesi, As}
-}
-
-// Calαs cal αs
-func Calαs(M float64) float64 {
-	return math.Abs(M / (pkg.PKGα1 * pkg.FC * pkg.PKGb * pkg.PKGh0 * pkg.PKGh0))
-}
-
-// CalPesi cal pesi
-func CalPesi(αs float64) float64 {
-	return math.Abs(1 - math.Sqrt(1-2*αs))
-}
-
-// CalAs cal As
-// m^2 / 10^6 -> mm^2
-func CalAs(pesi float64) float64 {
-	return math.Abs(pesi * pkg.PKGb * pkg.PKGα1 * pkg.FC * pkg.FY / math.Pow(10, 6))
-}
 
 // CalReinforcement cal reinforcement
 // h (mm) is the height of the board

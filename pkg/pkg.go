@@ -1,6 +1,9 @@
 package pkg
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 const (
 	// All const base on mm && KN/m^2
@@ -53,4 +56,29 @@ func GetLocation(point string) string {
 		return BUTTOM
 	}
 	panic(fmt.Sprintf("[GetLocation] bad point %s", point))
+}
+
+
+// Calculater calculate
+func Calculater(M float64) [3]float64 {
+	αs := Calαs(M)
+	pesi := CalPesi(αs)
+	As := CalAs(pesi)
+	return [3]float64{αs, pesi, As}
+}
+
+// Calαs cal αs
+func Calαs(M float64) float64 {
+	return math.Abs(M / (PKGα1 * FC * PKGb * PKGh0 * PKGh0))
+}
+
+// CalPesi cal pesi
+func CalPesi(αs float64) float64 {
+	return math.Abs(1 - math.Sqrt(1-2*αs))
+}
+
+// CalAs cal As
+// m^2 / 10^6 -> mm^2
+func CalAs(pesi float64) float64 {
+	return math.Abs(pesi * PKGb * PKGα1 * FC * FY / math.Pow(10, 6))
 }
