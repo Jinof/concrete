@@ -107,7 +107,7 @@ func CalLoad() {
 	// 永久荷载分项系数 1.3
 	// 可变荷载分项系数 1.5
 	g = sumCG * 1.3
-	q := dynamicLoad * 1.5
+	q = dynamicLoad * 1.5
 	sumLoad = g + q
 	// sumLoad == 10.312
 	// 取sumLoad = 10.3
