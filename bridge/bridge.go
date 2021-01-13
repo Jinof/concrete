@@ -127,7 +127,7 @@ func init() {
 // CalLoad calculate the load of bridge
 func CalLoad() {
 	// 板传来永久荷载
-	gBoard = board.GetG()
+	gBoard = board.GetG() * 2.2
 	// 次梁自重 0.2x(0.5-0.07)x25x1.3
 	selfG = 0.2 * (0.5 - 0.07) * 25 * 1.3
 	// 次梁粉刷 0.02x(0.5-0.07)x2x17x1.3
