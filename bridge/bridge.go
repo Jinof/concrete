@@ -9,17 +9,18 @@ import (
 )
 
 var (
-	g       float64 // g 永久荷载设计值
-	q       float64 // q 可变荷载设计值
-	sumLoad float64 // sumLoad 荷载总设计值
-	gBoard float64
-	selfG float64
+	g          float64 // g 永久荷载设计值
+	q          float64 // q 可变荷载设计值
+	sumLoad    float64 // sumLoad 荷载总设计值
+	gBoard     float64
+	selfG      float64
 	paintLayer float64
-	qBoard float64
+	qBoard     float64
 )
 
 // CalBridge calculate the bridge
 func CalBridge() {
+	fmt.Printf("gBoard 板传来的永久荷载 %f, selfG 次梁自重 %f, 次梁粉刷 %f \n", gBoard, selfG, paintLayer)
 	fmt.Printf("g 永久荷载设计值 %f, q 可变荷载设计值 %f, sumLoad 荷载总设计值 %f \n", g, q, sumLoad)
 	// 主梁截面 250x650 mm^2
 	// l01 边跨 l02 中间跨
@@ -58,13 +59,13 @@ func CalBridge() {
 
 	rbas = Calculator(pkg.FIRST, M1)
 	counter = append(counter, rbas)
-	
+
 	rbas = Calculator(pkg.B, MB)
 	counter = append(counter, rbas)
 
 	rbas = Calculator(pkg.C, MC)
 	counter = append(counter, rbas)
-	
+
 	rbas = Calculator(pkg.SECOND, M2)
 	counter = append(counter, rbas)
 
@@ -72,7 +73,7 @@ func CalBridge() {
 }
 
 // Calculator cal
-func Calculator(point string, M float64) (rba []pkg.RealBridgeAs){
+func Calculator(point string, M float64) (rba []pkg.RealBridgeAs) {
 	// 翼缘宽度
 	bf1 := CalFlangeWidth()
 
