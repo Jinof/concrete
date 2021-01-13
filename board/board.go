@@ -11,12 +11,16 @@ import (
 var (
 	g       float64 // g 永久荷载设计值
 	q       float64 // q 可变荷载设计值
+	t   float64
 	sumLoad float64 // sumLoad 荷载总设计值
 	sumCG   float64 // 板的永久荷载标准值小计
+	
 )
 
 // CalBoard calculate board
-func CalBoard() {
+func CalBoard() {	
+	fmt.Printf("g 永久荷载设计值 %f, q 可变荷载设计值 %f, sumLoad 荷载总设计值 %f \n", g, q, sumLoad)
+
 	// l01 边跨, l02 中间跨
 	// l01 = 1970 mm, l02 = 2000 mm
 	l01 := 1.97
@@ -58,6 +62,7 @@ func CalBoard() {
 	counters = append(counters, rf.Counter)
 
 	pkg.BestChoice(counters)
+
 }
 
 // Calculator cal the board
@@ -122,10 +127,8 @@ func CalLoad() {
 	sumLoad = g + q
 	// sumLoad == 10.312
 	// 取sumLoad = 10.3
-	t := sumLoad
+	t = sumLoad
 	sumLoad = 10.3
-
-	fmt.Println("sumLoad 荷载总设计值", t, "实际取", sumLoad)
 }
 
 func init() {
