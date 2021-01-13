@@ -43,7 +43,6 @@ const (
 	// HPB400Fyv 360N/mm^2 3.6 x 10 ^ 5 KN/m^2
 	HPB400Fyv = HPB400Fy
 
-
 	// A .
 	A = "A"
 	// B .
@@ -273,8 +272,8 @@ func BestChoice(counters [][]ReinforcementData) {
 	}
 
 	// 以MA配筋为基准, 统计间距相同配筋
-	tag := make([]bool, len(counters[1]))
-	c := make(map[int]int, len(counters[1]))
+	tag := make([]bool, len(counters[0]))
+	c := make(map[int]int, len(counters[0]))
 	for i := 0; i < len(counters); i++ {
 		for j := 0; j < len(counters[i]); j++ {
 			for l, t := range tag {
@@ -287,7 +286,6 @@ func BestChoice(counters [][]ReinforcementData) {
 		}
 	}
 
-	
 	bestExist := false
 	bestCount := 0
 
@@ -314,13 +312,12 @@ func BestChoice(counters [][]ReinforcementData) {
 		fmt.Printf("\n\n 最多重合配筋情况%d次 \n", bestCount)
 		for i, v := range tag {
 			if v {
-				fmt.Printf("%v \n", counters[1][i])
+				fmt.Printf("%v \n", counters[0][i])
 			}
 		}
 		fmt.Println()
 	}
 }
-
 
 // CalSingleLayerReinforcementH0 cal single layer h0
 func CalSingleLayerReinforcementH0() float64 {
@@ -341,8 +338,8 @@ func CheckBridgeTtype(M, bf, h0 float64) int {
 	return 2
 }
 
-func calBridgeM(bf, h0 float64) float64  {
-	return PKGα1 * FC * bf * PKGhf * (h0 - PKGhf / 2)
+func calBridgeM(bf, h0 float64) float64 {
+	return PKGα1 * FC * bf * PKGhf * (h0 - PKGhf/2)
 }
 
 // CalBridgeαs cal αs for bridge
@@ -355,12 +352,12 @@ func CalBridgeαs(tType int, M, bf1, h0 float64) float64 {
 
 // calBridgeFirstαs cal αs for bridge
 func calBridgeFirstαs(M, h0 float64) float64 {
-	return M / (PKGα1 * FC * PKGBridgeReinforcementb * math.Pow(h0, 2))
+	return math.Abs(M / (PKGα1 * FC * PKGBridgeReinforcementb * math.Pow(h0, 2)))
 }
 
 // calBridgeFirstαs cal αs for bridge
 func calBridgeDoubleαs(M, bf1, h0 float64) float64 {
-	return M / (PKGα1 * FC * bf1 * math.Pow(h0, 2))
+	return math.Abs(M / (PKGα1 * FC * bf1 * math.Pow(h0, 2)))
 }
 
 // CalBridgeAs cal bridge As
@@ -372,9 +369,115 @@ func CalBridgeAs(tType int, pesi, bf1, h0 float64) float64 {
 }
 
 func calBridgeFirstAs(pesi, h0 float64) float64 {
-	return pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / FY 
+	return math.Abs(pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
 }
 
 func calBridgeDoubleAs(pesi, bf1, h0 float64) float64 {
-	return pesi * bf1 * h0 * PKGα1 * FC / FY 
+	return math.Abs(pesi * bf1 * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
+}
+
+// NewBridgeDiameter generate diameters for bridge
+func NewBridgeDiameter() []float64 {
+	return []float64{12, 14, 16, 18, 20, 22, 25}
+}
+
+// CalBridgeReinforcementNum cal all possiable reinforcement num for bridge
+func CalBridgeReinforcementNum() []float64 {
+	ns := []float64{}
+	for n := 2.0; n < 10; n++ {
+		ns = append(ns, n)
+	}
+	return ns
+}
+
+func checkd(n, d float64) bool {
+	if n * d + (n-1) * 25 < PKGBridgeReinforcementb * math.Pow(10, 3) {
+		return true
+	}
+	return false
+}
+
+// RealBridgeAs def
+type RealBridgeAs struct {
+	N  float64
+	D  float64
+	As float64
+}
+
+// CalBridgeRealAs cal real bridge As
+func CalBridgeRealAs(ns, diameters []float64, As float64) (rbas []RealBridgeAs) {
+	for _, n := range ns {
+		for _, d := range diameters {
+			cal := calBridgeRealAs(n, d)
+			
+			if checkd(n, d) && checkAs(cal, As) {
+				rba := RealBridgeAs{
+					N:  n,
+					D:  d,
+					As: cal,
+				}
+				rbas = append(rbas, rba)
+			}
+		}
+	}
+	return
+}
+
+func calBridgeRealAs(n, d float64) float64 {
+	return n * math.Pi * math.Pow(d/2, 2)
+}
+
+// BestBridgeReinforcementChoice select the best choice
+func BestBridgeReinforcementChoice(counters [][]RealBridgeAs) {
+	type recordData struct {
+		point string
+		ReinforcementData
+	}
+
+	// 以MA配筋为基准, 统计间距相同配筋
+	tag := make([]bool, len(counters[0]))
+	c := make(map[int]int, len(counters[0]))
+	for i := 0; i < len(counters); i++ {
+		for j := 0; j < len(counters[i]); j++ {
+			for l, t := range tag {
+				if !t {
+					if counters[1][l].D == counters[i][j].D {
+						c[l]++
+					}
+				}
+			}
+		}
+	}
+
+	bestExist := false
+	bestCount := 0
+
+	for k, v := range c {
+		if v >= 5 {
+			tag[k] = true
+			bestCount = 5
+			bestExist = true
+		}
+	}
+
+	if !bestExist {
+		for k, v := range c {
+			if v >= 4 {
+				tag[k] = true
+				bestCount = 4
+				bestExist = true
+			}
+		}
+	}
+
+	if bestExist {
+
+		fmt.Printf("\n\n 最多重合的钢筋直径情况%d次 \n", bestCount)
+		for i, v := range tag {
+			if v {
+				fmt.Printf("%v \n", counters[0][i])
+			}
+		}
+		fmt.Println()
+	}
 }

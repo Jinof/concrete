@@ -18,7 +18,7 @@ var (
 func CalBridge() {
 	// 主梁截面 250x650 mm^2
 	// l01 边跨 l02 中间跨
-	l01 := (6600 - 130 - 250 / 2) / 1000.0
+	l01 := (6600 - 130 - 250/2) / 1000.0
 	l02 := (6600 - 250) / 1000.0
 
 	var gq float64
@@ -45,15 +45,29 @@ func CalBridge() {
 	fmt.Println("VB1", VBl)
 	fmt.Println("VC", VC)
 
-	Calculator(pkg.A, MA)
-	Calculator(pkg.FIRST, M1)
-	Calculator(pkg.B, MB)
-	Calculator(pkg.C, MC)
-	Calculator(pkg.SECOND, M2)
+	var rbas []pkg.RealBridgeAs
+	counter := [][]pkg.RealBridgeAs{}
+
+	rbas = Calculator(pkg.A, MA)
+	counter = append(counter, rbas)
+
+	rbas = Calculator(pkg.FIRST, M1)
+	counter = append(counter, rbas)
+	
+	rbas = Calculator(pkg.B, MB)
+	counter = append(counter, rbas)
+
+	rbas = Calculator(pkg.C, MC)
+	counter = append(counter, rbas)
+	
+	rbas = Calculator(pkg.SECOND, M2)
+	counter = append(counter, rbas)
+
+	pkg.BestBridgeReinforcementChoice(counter)
 }
 
 // Calculator cal
-func Calculator(point string, M float64) {
+func Calculator(point string, M float64) (rba []pkg.RealBridgeAs){
 	// 翼缘宽度
 	bf1 := CalFlangeWidth()
 
@@ -69,13 +83,29 @@ func Calculator(point string, M float64) {
 	pesi := pkg.CalPesi(αs)
 	As := pkg.CalBridgeAs(tType, pesi, bf1, h0)
 	fmt.Printf("M%s h0 %f, tType 第%d种, αs %f, pesi %f, As %f \n", point, h0, tType, αs, pesi, As)
+
+	rba = CalReinforcement(As)
+	fmt.Printf("以下为M%s的可能配筋 \n", point)
+	for i, v := range rba {
+		fmt.Println(i+1, v)
+	}
+	return
+}
+
+// CalReinforcement cal the reinforcement for bridge
+func CalReinforcement(As float64) (rab []pkg.RealBridgeAs) {
+	ns := pkg.CalBridgeReinforcementNum()
+	diameters := pkg.NewBridgeDiameter()
+	fmt.Println(ns, diameters)
+	rab = pkg.CalBridgeRealAs(ns, diameters, As)
+	return rab
 }
 
 // CalFlangeWidth cal flange width
 // bf1 (mm)
 func CalFlangeWidth() float64 {
 	// 翼缘宽度取 l/3, b + sn, b + 12hf 中的最小值
-	return min(min(6600/3.0, 200 + 2000), 200 + 12 * 80)
+	return min(min(6600/3.0, 200+2000), 200+12*80)
 }
 
 func min(a1, a2 float64) float64 {
