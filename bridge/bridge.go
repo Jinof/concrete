@@ -96,7 +96,6 @@ func Calculator(point string, M float64) (rba []pkg.RealBridgeAs){
 func CalReinforcement(As float64) (rab []pkg.RealBridgeAs) {
 	ns := pkg.CalBridgeReinforcementNum()
 	diameters := pkg.NewBridgeDiameter()
-	fmt.Println(ns, diameters)
 	rab = pkg.CalBridgeRealAs(ns, diameters, As)
 	return rab
 }
