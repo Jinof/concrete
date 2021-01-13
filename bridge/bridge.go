@@ -2,7 +2,7 @@ package bridge
 
 import (
 	"fmt"
-
+	"math"
 	"github.com/Jinof/concrete/board"
 )
 
@@ -14,6 +14,37 @@ var (
 
 // CalBridge calculate the bridge
 func CalBridge() {
+	// 主梁截面 250x650 mm^2
+	// l01 边跨 l02 中间跨
+	l01 := (6600 - 130 - 250 / 2) / 1000.0
+	l02 := (6600 - 250) / 1000.0
+
+	var gq float64
+	gq = sumLoad
+
+	MA := -gq * math.Pow(l01, 2) / 24
+	M1 := gq * math.Pow(l01, 2) / 14
+	MB := -gq * math.Pow(l01, 2) / 11
+	MC := -gq * math.Pow(l02, 2) / 16
+	// M2 = M3
+	M2 := gq * math.Pow(l02, 2) / 14
+
+	VA := 0.5 * gq * l01
+	VBl := 0.55 * gq * l01
+	// VBr == Vc
+	VC := 0.55 * (gq) * l02
+
+	fmt.Println("MA", MA)
+	fmt.Println("M1", M1)
+	fmt.Println("MB", MB)
+	fmt.Println("MC", MC)
+	fmt.Println("M2", M2)
+	fmt.Println("VA", VA)
+	fmt.Println("VB1", VBl)
+	fmt.Println("VC", VC)
+}
+
+func init() {
 	CalLoad()
 }
 
