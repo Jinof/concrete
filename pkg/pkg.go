@@ -13,14 +13,36 @@ const (
 	PKGα1 = 1.0
 	// FC  11.9 N/mm^2  1.19 x 10 ^ 4 KN/m^2
 	FC = 1.19 * 10000
+	// FT 1.27 N/mm^2 0.127 x 10 ^ 4 KN/m^2
+	FT = 0.127 * 10000
 	// PKGb b  1000 mm  1 m
 	PKGb = 1
 	// PKGh h 80 mm 0.08 m
 	PKGh = 0.07
+	// PKGhf == PKGh
+	PKGhf = PKGh
 	// PKGh0  h - 0.02 m
 	PKGh0 = PKGh - 0.02
 	// FY  270 N/mm^2  2.7 x 10 ^5 KN/m^2
 	FY = 2.7 * 100000
+	// PKGBridgec 梁的混凝土最小保护层厚度 c  20 mm 0.02 m
+	PKGBridgec = 0.02
+	// PKGBridgeReinforcementb 次梁宽度 b  200 mm 0.2 m
+	PKGBridgeReinforcementb = 0.2
+	// PKGBridgeReinforcementh 次梁高度 h  400 mm 0.4 m
+	PKGBridgeReinforcementh = 0.4
+	// PKGBridgeReinforcementd 次梁纵向钢筋直径 d 20 mm 0.02 m
+	PKGBridgeReinforcementd = 0.02
+	// PKGBridgeStirrupsd 次梁箍筋直径 d 10 mm 0.01 m
+	PKGBridgeStirrupsd = 0.01
+	// PKGBridgeReinforcementVerticald 次梁纵向钢筋竖向间距
+	PKGBridgeReinforcementVerticald = 0.025
+
+	// HPB400Fy 360N/mm^2  3.6 x 10 ^ 5 KN/m^2
+	HPB400Fy = 3.6 * 100000
+	// HPB400Fyv 360N/mm^2 3.6 x 10 ^ 5 KN/m^2
+	HPB400Fyv = HPB400Fy
+
 
 	// A .
 	A = "A"
@@ -249,7 +271,6 @@ func BestChoice(counters [][]ReinforcementData) {
 		point string
 		ReinforcementData
 	}
-	// points := []string{A, FIRST, B, C, SECOND}
 
 	// 以MA配筋为基准, 统计间距相同配筋
 	tag := make([]bool, len(counters[1]))
@@ -298,4 +319,62 @@ func BestChoice(counters [][]ReinforcementData) {
 		}
 		fmt.Println()
 	}
+}
+
+
+// CalSingleLayerReinforcementH0 cal single layer h0
+func CalSingleLayerReinforcementH0() float64 {
+	return PKGBridgeReinforcementh - PKGBridgec - PKGBridgeStirrupsd - (PKGBridgeReinforcementd / 2)
+}
+
+// CalDoubleLayerReinforcementH0 cal single layer h0
+func CalDoubleLayerReinforcementH0() float64 {
+	return CalSingleLayerReinforcementH0() - PKGBridgeReinforcementVerticald
+}
+
+// CheckBridgeTtype check T is the first T or the second T
+func CheckBridgeTtype(M, bf, h0 float64) int {
+	// α1*fc*bf'*hf'*(h0 - hf'/2) > M 则为第一种T形截面, 否则为第二种
+	if calBridgeM(bf, h0) > M {
+		return 1
+	}
+	return 2
+}
+
+func calBridgeM(bf, h0 float64) float64  {
+	return PKGα1 * FC * bf * PKGhf * (h0 - PKGhf / 2)
+}
+
+// CalBridgeαs cal αs for bridge
+func CalBridgeαs(tType int, M, bf1, h0 float64) float64 {
+	if tType == 1 {
+		return calBridgeFirstαs(M, h0)
+	}
+	return calBridgeDoubleαs(M, bf1, h0)
+}
+
+// calBridgeFirstαs cal αs for bridge
+func calBridgeFirstαs(M, h0 float64) float64 {
+	return M / (PKGα1 * FC * PKGBridgeReinforcementb * math.Pow(h0, 2))
+}
+
+// calBridgeFirstαs cal αs for bridge
+func calBridgeDoubleαs(M, bf1, h0 float64) float64 {
+	return M / (PKGα1 * FC * bf1 * math.Pow(h0, 2))
+}
+
+// CalBridgeAs cal bridge As
+func CalBridgeAs(tType int, pesi, bf1, h0 float64) float64 {
+	if tType == 1 {
+		return calBridgeFirstAs(pesi, h0)
+	}
+	return calBridgeDoubleαs(pesi, bf1, h0)
+}
+
+func calBridgeFirstAs(pesi, h0 float64) float64 {
+	return pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / FY 
+}
+
+func calBridgeDoubleAs(pesi, bf1, h0 float64) float64 {
+	return pesi * bf1 * h0 * PKGα1 * FC / FY 
 }

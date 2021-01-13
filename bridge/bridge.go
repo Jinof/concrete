@@ -3,7 +3,9 @@ package bridge
 import (
 	"fmt"
 	"math"
+
 	"github.com/Jinof/concrete/board"
+	"github.com/Jinof/concrete/pkg"
 )
 
 var (
@@ -42,6 +44,45 @@ func CalBridge() {
 	fmt.Println("VA", VA)
 	fmt.Println("VB1", VBl)
 	fmt.Println("VC", VC)
+
+	Calculator(pkg.A, MA)
+	Calculator(pkg.FIRST, M1)
+	Calculator(pkg.B, MB)
+	Calculator(pkg.C, MC)
+	Calculator(pkg.SECOND, M2)
+}
+
+// Calculator cal
+func Calculator(point string, M float64) {
+	// 翼缘宽度
+	bf1 := CalFlangeWidth()
+
+	var h0 float64
+	// 一排纵向钢筋直径
+	h01 := pkg.CalSingleLayerReinforcementH0()
+	h0 = h01
+	// 两排纵向钢筋直径
+	// h02 := pkg.CalDoubleLayerReinforcementH0()
+	// h0 = h02
+	tType := pkg.CheckBridgeTtype(M, bf1, h0)
+	αs := pkg.CalBridgeαs(tType, M, bf1, h0)
+	pesi := pkg.CalPesi(αs)
+	As := pkg.CalBridgeAs(tType, pesi, bf1, h0)
+	fmt.Printf("M%s h0 %f, tType 第%d种, αs %f, pesi %f, As %f \n", point, h0, tType, αs, pesi, As)
+}
+
+// CalFlangeWidth cal flange width
+// bf1 (mm)
+func CalFlangeWidth() float64 {
+	// 翼缘宽度取 l/3, b + sn, b + 12hf 中的最小值
+	return min(min(6600/3.0, 200 + 2000), 200 + 12 * 80)
+}
+
+func min(a1, a2 float64) float64 {
+	if a1 > a2 {
+		return a2
+	}
+	return a1
 }
 
 func init() {
