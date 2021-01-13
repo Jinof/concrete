@@ -35,20 +35,29 @@ func CalBoard() {
 	var cal pkg.BasicCalculaterData
 	var rf pkg.Reinforcement
 
+	counters := [][]pkg.ReinforcementData{}
+
 	cal, rf = Calculator(MA, pkg.A)
 	Printer(pkg.A, MA, cal, rf)
+	counters = append(counters, rf.Counter)
 
 	cal, rf = Calculator(M1, pkg.FIRST)
 	Printer(pkg.FIRST, MA, cal, rf)
+	counters = append(counters, rf.Counter)
 
 	cal, rf = Calculator(MB, pkg.B)
 	Printer(pkg.B, MA, cal, rf)
+	counters = append(counters, rf.Counter)
 
 	cal, rf = Calculator(MC, pkg.C)
 	Printer(pkg.C, MA, cal, rf)
+	counters = append(counters, rf.Counter)
 
 	cal, rf = Calculator(M2, pkg.SECOND)
 	Printer(pkg.SECOND, MA, cal, rf)
+	counters = append(counters, rf.Counter)
+
+	pkg.BestChoice(counters)
 }
 
 // Calculator cal the board

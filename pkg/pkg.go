@@ -86,7 +86,6 @@ func CalAs(pesi float64) float64 {
 	return math.Abs(pesi * PKGb * PKGα1 * FC * FY / math.Pow(10, 6))
 }
 
-
 // NewDiameter generate a array of diameters for SURFACE OF BUTTOM
 func NewDiameter(location string) (diameters []float64) {
 	// 板的钢筋直径取 6, 8, 10, 12 mm
@@ -118,16 +117,17 @@ func NewSpace(h float64) (space []float64) {
 
 // Reinforcement def
 type Reinforcement struct {
-	Counter []data
+	Counter []ReinforcementData
 }
 
-type data struct {
-	rfType string  // single or double
+// ReinforcementData def
+type ReinforcementData struct {
+	rfType string // single or double
 	space  float64
-	as float64
-	d float64
-	d1 float64
-	d2 float64
+	as     float64
+	d      float64
+	d1     float64
+	d2     float64
 }
 
 // Reinforcement def
@@ -152,11 +152,11 @@ func (rf *Reinforcement) CalRealSingleReinforcement(spaces []float64, diameters 
 			r = realAsOfBoardForSingleReinforcement(s, d)
 			if checkAs(r, As) {
 				exist = true
-				data := data{
+				data := ReinforcementData{
 					rfType: rfType,
-					space: s,
-					as: r,
-					d: d,
+					space:  s,
+					as:     r,
+					d:      d,
 				}
 				rf.Counter = append(rf.Counter, data)
 			}
@@ -182,24 +182,24 @@ func (rf *Reinforcement) CalRealDoubleReinforcement(spaces []float64, diameters 
 			cal := realAsOfBoardForDoubleReinforcement(s, diameters[i], diameters[i+1])
 			if checkAs(cal, As) {
 				exist = true
-				data := data{
+				data := ReinforcementData{
 					rfType: rfType,
-					space: s,
-					as: cal,
-					d1: diameters[i],
-					d2: diameters[i+1],
+					space:  s,
+					as:     cal,
+					d1:     diameters[i],
+					d2:     diameters[i+1],
 				}
 				rf.Counter = append(rf.Counter, data)
 			}
 			cal = realAsOfBoardForDoubleReinforcement(s, diameters[i+1], diameters[i])
 			if checkAs(cal, As) {
 				exist = true
-				data := data{
+				data := ReinforcementData{
 					rfType: rfType,
-					space: s,
-					as: cal,
-					d1: diameters[i],
-					d2: diameters[i+1],
+					space:  s,
+					as:     cal,
+					d1:     diameters[i],
+					d2:     diameters[i+1],
 				}
 				rf.Counter = append(rf.Counter, data)
 			}
@@ -241,4 +241,61 @@ func checkAs(cal float64, As float64) bool {
 		return true
 	}
 	return false
+}
+
+// BestChoice select the best choice
+func BestChoice(counters [][]ReinforcementData) {
+	type recordData struct {
+		point string
+		ReinforcementData
+	}
+	// points := []string{A, FIRST, B, C, SECOND}
+
+	// 以MA配筋为基准, 统计间距相同配筋
+	tag := make([]bool, len(counters[1]))
+	c := make(map[int]int, len(counters[1]))
+	for i := 0; i < len(counters); i++ {
+		for j := 0; j < len(counters[i]); j++ {
+			for l, t := range tag {
+				if !t {
+					if counters[1][l] == counters[i][j] {
+						c[l]++
+					}
+				}
+			}
+		}
+	}
+
+	
+	bestExist := false
+	bestCount := 0
+
+	for k, v := range c {
+		if v >= 5 {
+			tag[k] = true
+			bestCount = 5
+			bestExist = true
+		}
+	}
+
+	if !bestExist {
+		for k, v := range c {
+			if v >= 4 {
+				tag[k] = true
+				bestCount = 4
+				bestExist = true
+			}
+		}
+	}
+
+	if bestExist {
+
+		fmt.Printf("\n\n 最多重合配筋情况%d次 \n", bestCount)
+		for i, v := range tag {
+			if v {
+				fmt.Printf("%v \n", counters[1][i])
+			}
+		}
+		fmt.Println()
+	}
 }
