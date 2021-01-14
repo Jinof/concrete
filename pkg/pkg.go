@@ -61,6 +61,11 @@ const (
 	SURFACE = "SURFACE"
 	// BUTTOM  板底
 	BUTTOM = "BUTTOM"
+
+	// L1 6600 mm
+	L1 = 6.6
+	// L2 6200 mm
+	L2 = 6.2
 )
 
 // GetLocation return the location of the point
@@ -497,8 +502,4 @@ func BestBridgeReinforcementChoice(counters [][]RealBridgeAs) {
 		}
 		fmt.Println()
 	}
-}
-
-func bORbf1() {
-
 }

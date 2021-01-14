@@ -29,8 +29,8 @@ func CalBridge() {
 	fmt.Printf("g 永久荷载设计值 %f, q 可变荷载设计值 %f, sumLoad 荷载总设计值 %f \n", g, q, sumLoad)
 	// 主梁截面 250x650 mm^2
 	// l01 边跨 l02 中间跨
-	l01 := (6600 - 130 - 250/2) / 1000.0
-	l02 := (6600 - 250) / 1000.0
+	l01 := (pkg.L1 * 1000 - 130 - 250/2) / 1000.0
+	l02 := (pkg.L1 * 1000 - 250) / 1000.0
 	fmt.Printf("l01 %f, l02 %f \n", l01*math.Pow(10, 3), l02*math.Pow(10, 3))
 
 	var gq float64
