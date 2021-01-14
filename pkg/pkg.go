@@ -379,17 +379,17 @@ func calBridgeαs(M, bf1, h0 float64) float64 {
 
 // CalBridgeAs cal bridge As
 func CalBridgeAs(tType int, pesi, bf1, h0 float64) float64 {
-	if tType == 1 {
-		return calBridgeFirstAs(pesi, h0)
+	if tType != 0 {
+		return calBridgeAs(pesi, bf1, h0)
 	}
-	return calBridgeDoubleAs(pesi, bf1, h0)
+	return calBridgeSupportAs(pesi, h0)
 }
 
-func calBridgeFirstAs(pesi, h0 float64) float64 {
+func calBridgeSupportAs(pesi, h0 float64) float64 {
 	return math.Abs(pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
 }
 
-func calBridgeDoubleAs(pesi, bf1, h0 float64) float64 {
+func calBridgeAs(pesi, bf1, h0 float64) float64 {
 	return math.Abs(pesi * bf1 * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
 }
 
