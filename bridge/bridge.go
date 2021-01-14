@@ -81,7 +81,7 @@ func CalBridge() {
 // Calculator cal
 func Calculator(point string, M float64) (rba []pkg.RealBridgeAs) {
 	// 翼缘宽度
-	bf1 := CalFlangeWidth()
+	bf1 := CalFlangeWidth() / math.Pow(10, 3)
 
 	isT := pkg.CheckBridgeT(point)
 	var tType int
