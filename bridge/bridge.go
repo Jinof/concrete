@@ -26,6 +26,7 @@ func CalBridge() {
 	// l01 边跨 l02 中间跨
 	l01 := (6600 - 130 - 250/2) / 1000.0
 	l02 := (6600 - 250) / 1000.0
+	fmt.Printf("l01 %f, l02 %f \n", l01 * math.Pow(10, 3), l02 * math.Pow(10, 3))
 
 	var gq float64
 	gq = sumLoad
@@ -33,9 +34,9 @@ func CalBridge() {
 	MA := -gq * math.Pow(l01, 2) / 24
 	M1 := gq * math.Pow(l01, 2) / 14
 	MB := -gq * math.Pow(l01, 2) / 11
-	MC := -gq * math.Pow(l02, 2) / 16
 	// M2 = M3
-	M2 := gq * math.Pow(l02, 2) / 14
+	M2 := gq * math.Pow(l02, 2) / 16
+	MC := -gq * math.Pow(l02, 2) / 14
 
 	VA := 0.5 * gq * l01
 	VBl := 0.55 * gq * l01
@@ -45,8 +46,8 @@ func CalBridge() {
 	fmt.Println("MA", MA)
 	fmt.Println("M1", M1)
 	fmt.Println("MB", MB)
-	fmt.Println("MC", MC)
 	fmt.Println("M2", M2)
+	fmt.Println("MC", MC)
 	fmt.Println("VA", VA)
 	fmt.Println("VB1", VBl)
 	fmt.Println("VC", VC)
@@ -110,7 +111,7 @@ func CalReinforcement(As float64) (rab []pkg.RealBridgeAs) {
 // bf1 (mm)
 func CalFlangeWidth() float64 {
 	// 翼缘宽度取 l/3, b + sn, b + 12hf 中的最小值
-	return min(min(6600/3.0, 200+2000), 200+12*80)
+	return min(min(6600/3.0, 200+2000), 200.0+12*pkg.PKGhf)
 }
 
 func min(a1, a2 float64) float64 {
