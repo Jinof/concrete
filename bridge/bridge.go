@@ -83,11 +83,19 @@ func Calculator(point string, M float64) (rba []pkg.RealBridgeAs) {
 	// 翼缘宽度
 	bf1 := CalFlangeWidth()
 
-	tType := pkg.CheckBridgeTtype(M, bf1, h0)
+	isT := pkg.CheckBridgeT(point)
+	var tType int
+	if isT {
+		tType = pkg.CheckBridgeTtype(M, bf1, h0)
+	}
 	αs := pkg.CalBridgeαs(tType, M, bf1, h0)
 	pesi := pkg.CalPesi(αs)
 	As := pkg.CalBridgeAs(tType, pesi, bf1, h0)
-	fmt.Printf("M%s h0 %f, tType 第%d种, αs %f, pesi %f, As %f \n", point, h0, tType, αs, pesi, As)
+	if isT {
+		fmt.Printf("M%s h0 %f, tType 第%d种, αs %f, pesi %f, As %f \n", point, h0, tType, αs, pesi, As)
+	} else {
+		fmt.Printf("M%s h0 %f, 支座截面, αs %f, pesi %f, As %f \n", point, h0, αs, pesi, As)
+	}
 
 	rba = CalReinforcement(As)
 	fmt.Printf("以下为M%s的可能配筋 \n", point)

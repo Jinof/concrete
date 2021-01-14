@@ -329,6 +329,24 @@ func CalDoubleLayerReinforcementH0() float64 {
 	return CalSingleLayerReinforcementH0() - PKGBridgeReinforcementVerticald
 }
 
+//
+// CheckBridgeT check where the component is T
+func CheckBridgeT(point string) bool {
+	switch point {
+	case A:
+		return false
+	case B:
+		return false
+	case C:
+		return false
+	case FIRST:
+		return true
+	case SECOND:
+		return true
+	}
+	panic("Bas Bridge point to return T")
+}
+
 // CheckBridgeTtype check T is the first T or the second T
 func CheckBridgeTtype(M, bf, h0 float64) int {
 	// α1*fc*bf'*hf'*(h0 - hf'/2) > M 则为第一种T形截面, 否则为第二种
@@ -344,19 +362,18 @@ func calBridgeM(bf, h0 float64) float64 {
 
 // CalBridgeαs cal αs for bridge
 func CalBridgeαs(tType int, M, bf1, h0 float64) float64 {
-	if tType == 1 {
-		return calBridgeFirstαs(M, h0)
+	if tType != 0 {
+		return calBridgeαs(M, bf1, h0)
 	}
-	return calBridgeDoubleαs(M, bf1, h0)
+	return calBridgeSupportαs(M, h0)
 }
 
-// calBridgeFirstαs cal αs for bridge
-func calBridgeFirstαs(M, h0 float64) float64 {
+func calBridgeSupportαs(M, h0 float64) float64 {
 	return math.Abs(M / (PKGα1 * FC * PKGBridgeReinforcementb * math.Pow(h0, 2)))
 }
 
 // calBridgeFirstαs cal αs for bridge
-func calBridgeDoubleαs(M, bf1, h0 float64) float64 {
+func calBridgeαs(M, bf1, h0 float64) float64 {
 	return math.Abs(M / (PKGα1 * FC * bf1 * math.Pow(h0, 2)))
 }
 
@@ -365,7 +382,7 @@ func CalBridgeAs(tType int, pesi, bf1, h0 float64) float64 {
 	if tType == 1 {
 		return calBridgeFirstAs(pesi, h0)
 	}
-	return calBridgeDoubleαs(pesi, bf1, h0)
+	return calBridgeDoubleAs(pesi, bf1, h0)
 }
 
 func calBridgeFirstAs(pesi, h0 float64) float64 {
@@ -480,4 +497,8 @@ func BestBridgeReinforcementChoice(counters [][]RealBridgeAs) {
 		}
 		fmt.Println()
 	}
+}
+
+func bORbf1() {
+
 }
