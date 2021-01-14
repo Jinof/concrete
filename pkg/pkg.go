@@ -348,16 +348,16 @@ func CheckBridgeT(point string) bool {
 }
 
 // CheckBridgeTtype check T is the first T or the second T
-func CheckBridgeTtype(M, bf, h0 float64) int {
-	// α1*fc*bf'*hf'*(h0 - hf'/2) > M 则为第一种T形截面, 否则为第二种
-	if calBridgeM(bf, h0) > M {
+func CheckBridgeTtype(M, bf1, h0 float64) int {
+	// α1*fc*bf''*hf'*(h0 - hf'/2) > M 则为第一种T形截面, 否则为第二种
+	if calBridgeM(bf1, h0) > M {
 		return 1
 	}
 	return 2
 }
 
-func calBridgeM(bf, h0 float64) float64 {
-	return PKGα1 * FC * bf * PKGhf * (h0 - PKGhf/2)
+func calBridgeM(bf1, h0 float64) float64 {
+	return PKGα1 * FC * bf1 * PKGhf * (h0 - PKGhf/2)
 }
 
 // CalBridgeαs cal αs for bridge
