@@ -262,7 +262,7 @@ func realAsOfBoardForSingleReinforcement(s, d float64) float64 {
 // less than (1 - percent) * As
 // and greater than (1 + percent) * As
 func checkAs(cal float64, As float64) bool {
-	const percent = 0.2
+	const percent = 0.21
 	if cal > As*(1-percent/4) && cal < As*(1+percent) {
 		return true
 	}
