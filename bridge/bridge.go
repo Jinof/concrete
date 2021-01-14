@@ -117,7 +117,7 @@ func CalReinforcement(As float64) (rab []pkg.RealBridgeAs) {
 // bf1 (mm)
 func CalFlangeWidth() float64 {
 	// 翼缘宽度取 l/3, b + sn, b + 12hf 中的最小值
-	return min(min(6600/3.0, 200+2000), 200.0+12*pkg.PKGhf)
+	return min(min(6600/3.0, 200+2000), 200.0+12 * pkg.PKGhf * math.Pow(10, 3))
 }
 
 func min(a1, a2 float64) float64 {
