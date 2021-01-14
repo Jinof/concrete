@@ -16,17 +16,22 @@ var (
 	selfG      float64
 	paintLayer float64
 	qBoard     float64
+	h0         float64
+	h01        float64
+	h02        float64
 )
 
 // CalBridge calculate the bridge
 func CalBridge() {
+	fmt.Println("一排纵向钢筋 h0", h01)
+	fmt.Println("两排纵向钢筋 h0", h02)
 	fmt.Printf("gBoard 板传来的永久荷载 %f, selfG 次梁自重 %f, 次梁粉刷 %f \n", gBoard, selfG, paintLayer)
 	fmt.Printf("g 永久荷载设计值 %f, q 可变荷载设计值 %f, sumLoad 荷载总设计值 %f \n", g, q, sumLoad)
 	// 主梁截面 250x650 mm^2
 	// l01 边跨 l02 中间跨
 	l01 := (6600 - 130 - 250/2) / 1000.0
 	l02 := (6600 - 250) / 1000.0
-	fmt.Printf("l01 %f, l02 %f \n", l01 * math.Pow(10, 3), l02 * math.Pow(10, 3))
+	fmt.Printf("l01 %f, l02 %f \n", l01*math.Pow(10, 3), l02*math.Pow(10, 3))
 
 	var gq float64
 	gq = sumLoad
@@ -78,13 +83,6 @@ func Calculator(point string, M float64) (rba []pkg.RealBridgeAs) {
 	// 翼缘宽度
 	bf1 := CalFlangeWidth()
 
-	var h0 float64
-	// 一排纵向钢筋直径
-	h01 := pkg.CalSingleLayerReinforcementH0()
-	h0 = h01
-	// 两排纵向钢筋直径
-	// h02 := pkg.CalDoubleLayerReinforcementH0()
-	// h0 = h02
 	tType := pkg.CheckBridgeTtype(M, bf1, h0)
 	αs := pkg.CalBridgeαs(tType, M, bf1, h0)
 	pesi := pkg.CalPesi(αs)
@@ -145,4 +143,13 @@ func CalLoad() {
 
 	// 荷载设计总值
 	sumLoad = g + q
+
+	// 一排纵向钢筋直径
+	h01 = pkg.CalSingleLayerReinforcementH0()
+	h0 = h01
+	// 两排纵向钢筋直径
+	h02 = pkg.CalDoubleLayerReinforcementH0()
+	h0 = h02
+	// 优先用一排纵向钢筋
+	h0 = h01
 }
