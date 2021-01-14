@@ -391,11 +391,11 @@ func CalBridgeAs(tType int, pesi, bf1, h0 float64) float64 {
 }
 
 func calBridgeSupportAs(pesi, h0 float64) float64 {
-	return math.Abs(pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
+	return math.Abs(pesi * PKGBridgeReinforcementb * h0 * PKGα1 * FC / HPB400Fy * math.Pow(10, 6))
 }
 
 func calBridgeAs(pesi, bf1, h0 float64) float64 {
-	return math.Abs(pesi * bf1 * h0 * PKGα1 * FC / FY * math.Pow(10, 6))
+	return math.Abs(pesi * bf1 * h0 * PKGα1 * FC / HPB400Fy * math.Pow(10, 6))
 }
 
 // NewBridgeDiameter generate diameters for bridge
