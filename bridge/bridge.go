@@ -69,10 +69,10 @@ func CalBridge() {
 	rbas = Calculator(pkg.B, MB)
 	counter = append(counter, rbas)
 
-	rbas = Calculator(pkg.C, MC)
+	rbas = Calculator(pkg.SECOND, M2)
 	counter = append(counter, rbas)
 
-	rbas = Calculator(pkg.SECOND, M2)
+	rbas = Calculator(pkg.C, MC)
 	counter = append(counter, rbas)
 
 	pkg.BestBridgeReinforcementChoice(counter)
