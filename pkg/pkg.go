@@ -38,6 +38,11 @@ const (
 	// PKGBridgeReinforcementVerticald 次梁纵向钢筋竖向间距
 	PKGBridgeReinforcementVerticald = 0.025
 
+	// PKGGirderb 250 mm 0.25 m
+	PKGGirderb = 0.25
+	// PKGGirderh 650 mm 0.65 m
+	PKGGirderh = 0.65
+
 	// HPB400Fy 360N/mm^2  3.6 x 10 ^ 5 KN/m^2
 	HPB400Fy = 3.6 * 100000
 	// HPB400Fyv 360N/mm^2 3.6 x 10 ^ 5 KN/m^2

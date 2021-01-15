@@ -161,3 +161,13 @@ func CalLoad() {
 	// 优先用一排纵向钢筋
 	h0 = h01
 }
+
+// GetG return g
+func GetG() float64 {
+	return g
+}
+
+// GetQ return q
+func GetQ() float64 {
+	return q
+}
