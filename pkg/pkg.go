@@ -111,6 +111,12 @@ func CalPesi(αs float64) float64 {
 	return math.Abs(1 - math.Sqrt(1-2*αs))
 }
 
+// CalGama cal game
+func CalGama(αs float64) float64 {
+	return math.Abs(1+(math.Sqrt(1-2*αs))) / 2
+
+}
+
 // CalAs cal As
 // m^2 / 10^6 -> mm^2
 func CalAs(pesi float64) float64 {
@@ -418,7 +424,7 @@ func CalBridgeReinforcementNum() []float64 {
 }
 
 func checkd(n, d float64) bool {
-	if n * d + (n-1) * 25 < PKGBridgeReinforcementb * math.Pow(10, 3) {
+	if n*d+(n-1)*25 < PKGBridgeReinforcementb*math.Pow(10, 3) {
 		return true
 	}
 	return false
@@ -436,7 +442,7 @@ func CalBridgeRealAs(ns, diameters []float64, As float64) (rbas []RealBridgeAs) 
 	for _, n := range ns {
 		for _, d := range diameters {
 			cal := calBridgeRealAs(n, d)
-			
+
 			if checkd(n, d) && checkAs(cal, As) {
 				rba := RealBridgeAs{
 					N:  n,
@@ -507,4 +513,9 @@ func BestBridgeReinforcementChoice(counters [][]RealBridgeAs) {
 		}
 		fmt.Println()
 	}
+}
+
+// CalGirderAs cal bridge As
+func CalGirderAs(gama, M, h0 float64) float64 {
+	return math.Abs(M/(gama*HPB400Fy*h0)) * math.Pow(10, 6)
 }
